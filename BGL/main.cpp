@@ -1,6 +1,5 @@
 #include <iostream>
 #include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/graphviz.hpp>
 #include <boost/graph/properties.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/named_function_params.hpp>
@@ -30,7 +29,6 @@ int main()
     typedef graph_traits<MyGraphType>::vertex_descriptor vertex_descriptor;
     typedef property_map<MyGraphType, edge_weight_t>::type EdgeWeightMap;
     //typedef DistanceProperty::matrix_type DistanceMatrix;
-
     const int num_nodes = 14;
     E edge_array[] = { 
     E(1, 4), E(1, 3), E(2, 5), E(3, 2), E(3, 5),
@@ -43,7 +41,6 @@ int main()
     };
     int weights[] = { 8, 8, 7, 7, 8, 4, 1, 3, 2, 9, 4, 6, 3, 3, 2, 4, 10, 6, 6, 2, 8, 9, 6, 2 };
     size_t num_edges = sizeof(edge_array) / sizeof(E);
-
 //-------------------------------Insertar vertices------------------------------
     t0=clock();
     MyGraphType G(edge_array, edge_array + num_edges, weights, num_nodes);
@@ -52,7 +49,6 @@ int main()
     cout << "DFS execution time: " << time << "ms"<<endl;
     //Weight map
     property_map<MyGraphType, edge_weight_t>::type weightmap = get(edge_weight, G);
-
 
 //--------------------------------------- DFS --------------------------------------
     default_dfs_visitor vis;
@@ -85,18 +81,14 @@ int main()
     time = (double(t1-t0)/CLOCKS_PER_SEC)*1000;
     cout << "Kruskal execution time: " << time << "ms"<< endl;
 // //---------------------------------Algoritmo Dijkstra-------------------------------
-    // vector<vertex_descriptor> q(num_vertices(G));
-    // vector<int> d(num_vertices(G));
-    // vertex_descriptor s = vertex(1, G);
-    // property_map<MyGraphType, vertex_index_t>::type indexmap = get(G,vertex_index);
-    // t0=clock();
-    // // dijkstra_shortest_paths(G, s, &q[0], &d[0], weightmap, indexmap, 
-    // //                       less<int>(), closed_plus<int>(), 
-    // //                       (numeric_limits<int>::max)(), 0,
-    // //                       default_dijkstra_visitor());
-    // dijkstra_shortest_paths(G, s, predecessor_map(&q[0]).distance_map(&d[0]));
-    // time = (double(t1-t0)/CLOCKS_PER_SEC)*1000;
-    // cout << "Dijkstra execution time: " << time << "ms"<< endl;
+    vector<vertex_descriptor> predecesores(num_vertices(G));
+    vector<int> distancias(num_vertices(G));
+    vertex_descriptor s = vertex(1, G);
+    t0=clock();
+    dijkstra_shortest_paths(G, s, predecessor_map(&predecesores[0]).distance_map(&distancias[0]));
+    t1 = clock();
+    time = (double(t1-t0)/CLOCKS_PER_SEC)*1000;
+    cout << "Dijkstra execution time: " << time << "ms"<< endl;
 // //-------------------------------Algoritmo Floyd-Warshall----------------------------
     // map<vertex_descriptor, map<vertex_descriptor, float> > matrix;
     // EdgeWeightMap weight_pmap = get(edge_weight, G);
